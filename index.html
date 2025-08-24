@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Generator Sertifikat MBKM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen" oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+
+  <!-- Form Input -->
+  <div id="formSection" class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <img src="logo.png" alt="Logo UNTAD" class="w-120 h-24 mx-auto mb-4" onerror="this.style.display='none';">
+      <h1 class="text-4xl font-bold text-white mb-2">Generator Sertifikat Peserta MBKM</h1>
+      <p class="text-2xl text-blue-200">Khusus Mahasiswa Universitas Tadulako</p>
+    </div>
+    
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      
+      <form id="certificateForm" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">NIM</label>
+          <input type="text" id="nim" required 
+                 pattern="[0-9A-Z]+"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Masukkan NIM"
+                 title="NIM hanya boleh menggunakan angka (0-9) dan huruf kapital (A-Z)"
+                 style="text-transform: uppercase;">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+          <input type="text" id="namaLengkap" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Masukkan nama lengkap"
+                 style="text-transform: uppercase;">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">No WhatsApp</label>
+          <input type="tel" id="noWA" required 
+                 pattern="[0-9]+"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Contoh: 08123456789"
+                 title="Nomor WhatsApp hanya boleh menggunakan angka">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Kode TA Program MBKM</label>
+          <select id="kodeTA" required 
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Pilih Kode TA</option>
+            <option value="20222">20222 (Genap 2022/2023)</option>
+            <option value="20231">20231 (Ganjil 2023/2024)</option>
+            <option value="20232">20232 (Genap 2023/2024)</option>
+            <option value="20241">20241 (Ganjil 2024/2025)</option>
+            <option value="20242">20242 (Genap 2024/2025)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nama Mitra</label>
+          <input type="text" id="namaMitra" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Masukkan nama mitra tidak disingkat"
+                 style="text-transform: uppercase;"
+                 title="Nama Mitra Tidak Disingkat">
+        </div>
+
+        <div id="loadingIndicator" class="hidden text-center py-4">
+          <div class="inline-flex items-center">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-3"></div>
+            <span class="text-blue-600">Mencari data...</span>
+          </div>
+        </div>
+
+        <div id="dataPreview" class="hidden bg-blue-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-blue-800 mb-3">Data ditemukan untuk NIM ini:</h3>
+          <div id="programSelection" class="space-y-2">
+            <!-- Program options will be populated here -->
+          </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 shadow-lg">
+          Download Sertifikat
+        </button>
+      </form>
+    </div>
+    
+    <!-- Footer -->
+    <div class="text-center mt-8 px-4">
+      <div class="max-w-4xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-6">
+        <p class="text-white text-sm leading-relaxed">
+          <strong>Sumber Data :</strong> SITAMPAN UNTAD Mulai Semester Genap 2022/2023, Bagi Pengguna SILA dapat menghubungi Unit MBKM Fakultas/Penyelenggara MBKM Fakultas masing-masing.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sertifikat (Hidden) -->
+  <div id="sertifikat" class="hidden relative bg-cover bg-center shadow-2xl" style="background-image: url('background.png'); width:1123px; height:794px;">
+    
+
+    <!-- Konten Sertifikat -->
+    <div class="absolute inset-0 p-10 text-center flex flex-col justify-between">
+      
+      <!-- Header dengan Logo -->
+      <div>
+        <div class="flex flex-col items-center mb-2">
+          <img src="logo.png" alt="Logo" class="w-96 h-auto" onerror="this.style.display='none';">
+          <div>
+            <h1 class="text-5xl font-bold text-blue-800 mb-1">SERTIFIKAT</h1>
+            <p class="text-3xl text-yellow-600 font-semibold">Penghargaan</p>
+          </div>
+        </div>
+        <p class="text-lg text-gray-600">Nomor: 2319/UN28.16/PP.02.10/2025</p>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 flex flex-col justify-center">
+        <div class="mb-6">
+          <p class="text-xl mb-4">Diberikan kepada:</p>
+          <p id="namaField" class="text-3xl font-bold text-blue-800"></p>
+          <p class="mt-4 text-2xl">Sebagai <span class="font-bold text-blue-800">Peserta</span></p>
+        </div>
+
+        <div class="max-w-4xl mx-auto text-center text-xl leading-snug">
+          <p>
+            Program <span id="programField" class="font-bold"></span> 
+            di <span id="mitraField" class="font-bold"></span> sebagai Bentuk Kegiatan Pembelajaran (BKP) dari 
+            Program Merdeka Belajar – Kampus Merdeka (MBKM) Universitas Tadulako (UNTAD)
+            yang dilaksanakan pada Semester <span id="semesterField"></span> 
+            Tahun Akademik <span id="taField"></span>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer dengan TTD dan Cap -->
+      <div class="flex justify-center">
+        <div class="text-center relative text-lg leading-tight">
+          <p class="font-bold">Palu, <span id="tanggalField"></span></p>
+          <p class="mb-4">Kepala LPPM,</p>
+          
+          <!-- TTD dan Cap -->
+          <div class="relative inline-block w-80 mb-0">
+            <img src="ttd.png" alt="Tanda Tangan" class="w-60 relative top-0 left-5 z-10" onerror="this.style.display='none';">
+            <img src="cap.png" alt="Cap" class="w-96 absolute -top-4 left-5 z-20" onerror="this.style.display='none';">
+          </div>
+            <p class="font-bold">Dr. Lukman, M.Hum.</p>
+            <p>NIP.196606211992031004</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="data.js"></script>
+  <script>
+    // Security Protection - Disable Developer Tools
+    document.addEventListener('keydown', function(e) {
+      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
+      if (e.keyCode === 123 || // F12
+          (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+          (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+          (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+          (e.ctrlKey && e.shiftKey && e.keyCode === 67)) { // Ctrl+Shift+C
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
+
+    // Disable right click context menu
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Disable drag and drop
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Detect DevTools
+    let devtools = {
+      open: false,
+      orientation: null
+    };
+    
+    const threshold = 160;
+    
+    setInterval(() => {
+      if (window.outerHeight - window.innerHeight > threshold || 
+          window.outerWidth - window.innerWidth > threshold) {
+        if (!devtools.open) {
+          devtools.open = true;
+          alert('Developer tools terdeteksi! Halaman akan dimuat ulang untuk keamanan.');
+          window.location.reload();
+        }
+      } else {
+        devtools.open = false;
+      }
+    }, 500);
+
+    // Disable console
+    if (typeof console !== 'undefined') {
+      console.log = function() {};
+      console.warn = function() {};
+      console.error = function() {};
+      console.info = function() {};
+      console.debug = function() {};
+      console.clear = function() {};
+    }
+
+    // Simulasi database spreadsheet - format array untuk multiple entries per NIM
+    
+    
+
+    // Function to convert kodeTA to readable format
+    function parseKodeTA(kodeTA) {
+      const tahunAwal = kodeTA.substring(0, 4);
+      const semesterCode = kodeTA.substring(4, 5);
+      const tahunAkhir = parseInt(tahunAwal) + 1;
+      
+      const semester = semesterCode === "1" ? "Ganjil" : "Genap";
+      const tahunAjaran = `${tahunAwal}/${tahunAkhir}`;
+      
+      return {
+        semester: `${semester}`,
+        tahunAjaran: tahunAjaran
+      };
+    }
+
+    let currentData = null;
+
+    // Auto-search saat NIM dan kodeTA diisi
+    document.getElementById('nim').addEventListener('input', function(e) {
+      checkAndSearch();
+    });
+
+    document.getElementById('kodeTA').addEventListener('change', function(e) {
+      checkAndSearch();
+    });
+
+    function checkAndSearch() {
+      const nim = document.getElementById('nim').value.trim();
+      const kodeTA = document.getElementById('kodeTA').value;
+      
+      if (nim.length >= 8 && kodeTA) {
+        searchStudentData(nim, kodeTA);
+      } else {
+        hideDataPreview();
+      }
+    }
+
+    function searchStudentData(nim, kodeTA) {
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const dataPreview = document.getElementById('dataPreview');
+      
+      loadingIndicator.classList.remove('hidden');
+      dataPreview.classList.add('hidden');
+      
+      // Simulasi delay pencarian
+      setTimeout(() => {
+        loadingIndicator.classList.add('hidden');
+        
+        // Cari data dengan NIM dan kodeTA yang sama
+        const foundData = spreadsheetData.filter(data => data.nim === nim && data.kodeTA === kodeTA);
+        
+        if (foundData.length > 0) {
+          showDataPreview(foundData);
+        } else {
+          showNotFound();
+        }
+      }, 1000);
+    }
+
+    function showDataPreview(dataArray) {
+      const programSelection = document.getElementById('programSelection');
+      programSelection.innerHTML = '';
+      
+      // Since NIM + kodeTA combination is unique, there will be only one result
+      const data = dataArray[0];
+      const parsedTA = parseKodeTA(data.kodeTA);
+      
+      // Set current data automatically
+      currentData = data;
+      
+      const programDisplay = document.createElement('div');
+      programDisplay.className = 'border border-green-200 bg-green-50 rounded-lg p-4';
+      programDisplay.innerHTML = `
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-green-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <div class="flex-1">
+            <div class="font-medium text-green-800">${data.namaProgram}</div>
+            <div class="text-sm text-gray-600">
+              <span class="font-medium">Semester:</span> ${parsedTA.semester} | 
+              <span class="font-medium">Tahun Akademik:</span> ${parsedTA.tahunAjaran}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      programSelection.appendChild(programDisplay);
+      document.getElementById('dataPreview').classList.remove('hidden');
+    }
+
+    function showNotFound() {
+      const dataPreview = document.getElementById('dataPreview');
+      dataPreview.innerHTML = `
+        <div class="bg-red-50 p-4 rounded-lg">
+          <p class="text-red-600 font-medium">⚠️ Data tidak ditemukan untuk NIM ini</p>
+          <p class="text-red-500 text-sm mt-1">Pastikan NIM sudah benar atau hubungi admin</p>
+        </div>
+      `;
+      dataPreview.classList.remove('hidden');
+    }
+
+    function hideDataPreview() {
+      document.getElementById('dataPreview').classList.add('hidden');
+      currentData = null;
+    }
+
+    // Handle form submission
+    document.getElementById('certificateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!currentData) {
+        alert('Data mahasiswa tidak ditemukan. Pastikan NIM dan Kode TA sudah benar.');
+        return;
+      }
+
+      generateCertificate();
+    });
+
+    function generateCertificate() {
+      // Ambil data dari form
+      const namaLengkap = document.getElementById('namaLengkap').value;
+      const namaMitra = document.getElementById('namaMitra').value;
+      
+      // Parse kodeTA untuk mendapatkan semester dan tahun ajaran
+      const parsedTA = parseKodeTA(currentData.kodeTA);
+      
+      // Set tanggal hari ini
+      //const today = new Date();
+      //const tanggal = today.toLocaleDateString('id-ID', {
+        //day: 'numeric',
+        //month: 'long', 
+        //year: 'numeric'
+      //});
+
+      const tanggal = '25 Agustus 2025'
+
+      // Isi data ke sertifikat - pastikan nama tampil
+      document.getElementById('namaField').textContent = namaLengkap.toUpperCase();
+      document.getElementById('programField').textContent = currentData.namaProgram;
+      document.getElementById('mitraField').textContent = namaMitra.toUpperCase();
+      document.getElementById('semesterField').textContent = parsedTA.semester;
+      document.getElementById('taField').textContent = parsedTA.tahunAjaran;
+      document.getElementById('tanggalField').textContent = tanggal;
+
+      // Generate dan download PDF
+      setTimeout(() => {
+        downloadPDF(namaLengkap);
+      }, 500);
+    }
+
+    function downloadPDF(namaLengkap) {
+      const sertifikat = document.getElementById("sertifikat");
+      
+      // Tampilkan sertifikat sementara untuk capture
+      sertifikat.classList.remove('hidden');
+      document.body.appendChild(sertifikat);
+      
+      html2canvas(sertifikat, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#f5f5f5'
+      }).then(canvas => {
+        const imgData = canvas.toDataURL("image/png", 1.0);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("landscape", "pt", "a4");
+        
+        // Hitung dimensi untuk fit ke A4
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = (pdfHeight - imgHeight * ratio) / 2;
+        
+        pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+        
+        // Download dengan nama file yang sesuai
+        const fileName = `Sertifikat_MBKM_${namaLengkap.replace(/\s+/g, '_')}.pdf`;
+        pdf.save(fileName);
+        
+        // Sembunyikan sertifikat kembali
+        sertifikat.classList.add('hidden');
+        
+        // Tampilkan pesan sukses
+        showSuccessMessage();
+      }).catch(error => {
+        console.error('Error generating PDF:', error);
+        alert('Terjadi kesalahan saat membuat PDF. Silakan coba lagi.');
+        sertifikat.classList.add('hidden');
+      });
+    }
+
+    function showSuccessMessage() {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50';
+      successDiv.innerHTML = `
+        <div class="flex items-center">
+          <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span>Sertifikat berhasil didownload!</span>
+        </div>
+      `;
+      
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        successDiv.remove();
+      }, 3000);
+    }
+
+    // Reset form setelah sukses
+    function resetForm() {
+      document.getElementById('certificateForm').reset();
+      hideDataPreview();
+      currentData = null;
+    }
+  </script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9739614457f89fda',t:'MTc1NTkzOTIxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
