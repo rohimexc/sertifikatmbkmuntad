@@ -124,7 +124,8 @@
       <div class="flex-1 flex flex-col justify-center">
         <div class="mb-6">
           <p class="text-xl mb-4">Diberikan kepada:</p>
-          <p id="namaField" class="text-3xl font-bold text-blue-800"></p>
+          <p id="namaField" class="text-3xl font-bold text-blue-800 inline-block border-b-2 border-blue-800 pb-3 leading-normal"></p>
+          <p id="nimField" class="font-bold"></p>
           <p class="mt-4 text-2xl">Sebagai <span class="font-bold text-blue-800">Peserta</span></p>
         </div>
 
@@ -347,7 +348,10 @@
     function generateCertificate() {
       // Ambil data dari form
       const namaLengkap = document.getElementById('namaLengkap').value;
+      const nim = document.getElementById('nim').value.trim();
       const namaMitra = document.getElementById('namaMitra').value;
+
+      const nimVar =  `NIM. ${nim}`
       
       // Parse kodeTA untuk mendapatkan semester dan tahun ajaran
       const parsedTA = parseKodeTA(currentData.kodeTA);
@@ -364,6 +368,7 @@
 
       // Isi data ke sertifikat - pastikan nama tampil
       document.getElementById('namaField').textContent = namaLengkap.toUpperCase();
+      document.getElementById('nimField').textContent = nimVar.toUpperCase();
       document.getElementById('programField').textContent = currentData.namaProgram;
       document.getElementById('mitraField').textContent = namaMitra.toUpperCase();
       document.getElementById('semesterField').textContent = parsedTA.semester;
