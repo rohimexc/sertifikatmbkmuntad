@@ -10,15 +10,22 @@
 <body class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen" oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
 
   <!-- Form Input -->
-  <div id="formSection" class="container mx-auto px-4 py-8 sm:py-8">
+  <div id="formSection" class="container mx-auto px-3 sm:px-6 py-6 sm:py-10">
     <!-- Header -->
     <div class="text-center mb-6">
-      <img src="logo.png" alt="Logo UNTAD" class="w-120 h-24 mx-auto mb-4" onerror="this.style.display='none';">
-      <h1 class="text-4xl font-bold text-white mb-2">Download Sertifikat Peserta MBKM</h1>
-      <p class="text-2xl text-blue-200">Khusus Mahasiswa Universitas Tadulako</p>
+      <img src="logo.png" alt="Logo UNTAD" 
+           class="w-32 sm:w-40 md:w-48 h-auto mx-auto mb-4" 
+           onerror="this.style.display='none';">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
+        Download Sertifikat Peserta MBKM
+      </h1>
+      <p class="text-base sm:text-lg md:text-2xl text-blue-200">
+        Khusus Mahasiswa Universitas Tadulako
+      </p>
     </div>
     
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+    
+    <div class="w-full max-w-md sm:max-w-xl md:max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
       
       <form id="certificateForm" class="space-y-6">
         <div>
@@ -92,13 +99,15 @@
     </div>
     
     <!-- Footer -->
-    <div class="text-center mt-8 px-4">
-      <div class="max-w-4xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-6">
-        <p class="text-white text-sm leading-relaxed">
-          <strong>Sumber Data :</strong> SITAMPAN UNTAD Mulai Semester Genap 2022/2023, Bagi Pengguna SILA dapat menghubungi Unit MBKM Fakultas/Penyelenggara MBKM Fakultas masing-masing.
+    <div class="text-center mt-6 sm:mt-8 px-3 sm:px-4">
+      <div class="max-w-3xl md:max-w-4xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-4 sm:p-6">
+        <p class="text-white text-xs sm:text-sm md:text-base leading-relaxed">
+          <strong>Sumber Data :</strong> SITAMPAN UNTAD Mulai Semester Genap 2022/2023, 
+          Bagi Pengguna SILA dapat menghubungi Unit MBKM Fakultas/Penyelenggara MBKM Fakultas masing-masing.
         </p>
       </div>
     </div>
+    
   </div>
 
   <!-- Sertifikat (Hidden) -->
@@ -160,18 +169,7 @@
   <script src="data.js"></script>
   <script>
     // Security Protection - Disable Developer Tools
-    document.addEventListener('keydown', function(e) {
-      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
-      if (e.keyCode === 123 || // F12
-          (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-          (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
-          (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
-          (e.ctrlKey && e.shiftKey && e.keyCode === 67)) { // Ctrl+Shift+C
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    });
+
 
     // Disable right click context menu
     document.addEventListener('contextmenu', function(e) {
