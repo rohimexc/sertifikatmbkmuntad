@@ -169,7 +169,18 @@
   <script src="data.js"></script>
   <script>
     // Security Protection - Disable Developer Tools
-
+    document.addEventListener('keydown', function(e) {
+      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
+      if (e.keyCode === 123 || // F12
+          (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+          (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+          (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+          (e.ctrlKey && e.shiftKey && e.keyCode === 67)) { // Ctrl+Shift+C
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
 
     // Disable right click context menu
     document.addEventListener('contextmenu', function(e) {
